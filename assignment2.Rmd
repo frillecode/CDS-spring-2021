@@ -1,0 +1,250 @@
+---
+title: "Spatial Analytics: Assignment 2"
+output: pdf_document
+---
+# W2 - Projections and maps
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# EXERCISE 1
+
+## DESCRIPTION
+
+#### Goals ####
+
+Modify the provided code to improve the resulting map
+
+We highlighted all parts of the R script in which you are supposed to add your own code with: 
+
+#### Loading relevant libraries ####
+We will use the sf, raster, and tmap packages. Additionally, we will use the spData and spDataLarge packages that provide new datasets. These packages have been preloaded to the worker2 workspace.
+```{r}
+library(sf)
+library(raster)
+library(tmap)
+library(spData)
+library(spDataLarge)
+```
+
+#### Data sets #### 
+We will use two data sets: `nz_elev` and `nz`. They are contained by the libraries.  
+The first one is an elevation raster object for the New Zealand area, and the second one is an sf object with polygons representing the 16 regions of New Zealand.
+
+#### Existing code ####
+We wrote the code to create a new map of New Zealand.
+Your role is to improve this map based on the suggestions below.
+
+```{r}
+tm_shape(nz_elev)  +
+  tm_raster(title = "elev", 
+            style = "cont",
+            palette = "BuGn") +
+  tm_shape(nz) +
+  tm_borders(col = "red", 
+             lwd = 3) +
+  tm_scale_bar(breaks = c(0, 100, 200),
+               text.size = 1) +
+  tm_compass(position = c("LEFT", "center"),
+             type = "rose", 
+             size = 2) +
+  tm_credits(text = "A. Sobotkova, 2020") +
+  tm_layout(main.title = "My map",
+            bg.color = "orange",
+            inner.margins = c(0, 0, 0, 0))
+```
+
+#### Exercise I ####
+
+1. Change the map title from "My map" to "New Zealand".
+2. Update the map credits with your own name and today's date.
+3. Change the color palette to "-RdYlGn". 
+   (You can also try other palettes from http://colorbrewer2.org/)
+4. Put the north arrow in the top right corner of the map.
+5. Improve the legend title by adding the used units (m asl).
+6. Increase the number of breaks in the scale bar.
+7. Change the borders' color of the New Zealand's regions to black. 
+   Decrease the line width.
+8. Change the background color to any color of your choice.
+
+#### EXERCISE II ####
+
+9. Read two new datasets, `srtm` and `zion`, using the code below.
+   To create a new map representing these datasets.
+
+```{r}
+srtm = raster(system.file("raster/srtm.tif", package = "spDataLarge"))
+zion = read_sf(system.file("vector/zion.gpkg", package = "spDataLarge"))
+```
+
+## MY SOLUTION
+
+#### Exercise I ####
+Using the provided code, I updated the map of New Zealand: 
+```{r}
+tm_shape(nz_elev)  +
+  tm_raster(title = "elev (m asl)",  #added units to legend title
+            style = "cont",
+            palette = "-RdYlGn") + #changed color palette
+  tm_shape(nz) +
+  tm_borders(col = "black",  #changed line color of borders between regions
+             lwd = 1) +  #changed line width of borders between regions
+  tm_scale_bar(breaks = c(0, 25, 50, 75, 100, 125, 150, 175, 200),  #added more breaks in scale bar
+               text.size = 1) +
+  tm_compass(position = c("RIGHT", "top"),  #move North-arrow to top-right corner of map
+             type = "rose", 
+             size = 2) +
+  tm_credits(text = "F. Hæstrup, 02-09-2021") +   #added date and my name
+  tm_layout(main.title = "New Zealand",
+            bg.color = "lightblue",   #changed background color
+            inner.margins = c(0, 0, 0, 0))
+```
+
+
+
+#### Exercise II ####
+Here, I have created a map representing the srtm and zion data sets:
+```{r}
+tm_shape(srtm)  +
+  tm_raster(title = "Elevation",
+            palette = "-RdYlGn") + #color palette
+  tm_layout(legend.outside = TRUE) + 
+  tm_shape(zion) +
+  tm_borders(col = "black",  #line color
+             lwd = 2) + #line width  
+  tm_compass(position = c("RIGHT", "top"),  #position of North-arrow
+             type = "rose", 
+             size = 2) +
+  tm_credits(text = "F. Hæstrup, 02-09-2021", #added date and my name
+             position = c("LEFT", "bottom")) +   
+  tm_layout(main.title = "Zion National Park", #title
+            inner.margins = c(0, 0, 0, 0))
+
+
+```
+
+# EXERCISE 2
+
+## DESCRIPTION
+
+#### Goals ####
+
+- Understand the provided datasets
+- Learn how to reproject spatial data
+- Limit your data into an area of interest
+- Create a new map
+
+We highlighted all parts of the R script in which you are supposed to add your own code with: 
+
+
+#### Data sets #### 
+
+We will use two data sets: `srtm` and `zion`.
+The first one is an elevation raster object for the Zion National Park area, and the second one is an sf object with polygons representing borders of the Zion National Park.
+
+```{r}
+srtm <- raster(system.file("raster/srtm.tif", package = "spDataLarge"))
+zion <- read_sf(system.file("vector/zion.gpkg", package = "spDataLarge"))
+```
+
+#### Exercise I ####
+
+1. Display the `zion` object and view its structure.
+   What can you say about the content of this file?
+   What type of data does it store? 
+   What is the coordinate system used?
+   How many attributes does it contain?
+   What is its geometry?
+2. Display the `srtm` object and view its structure.
+   What can you say about the content of this file? 
+   What type of data does it store?
+   What is the coordinate system used? 
+   How many attributes does it contain?
+   How many dimensions does it have? 
+   What is the data resolution?
+
+#### Exercise II ####
+
+1. Reproject the `srtm` dataset into the coordinate reference system used in the `zion` object. 
+   Create a new object `srtm2`
+   Vizualize the results using the `plot()` function.
+2. Reproject the `zion` dataset into the coordinate reference system used in the `srtm` object.
+   Create a new object `zion2`
+   Vizualize the results using the `plot()` function.
+   
+## MY SOLUTION
+
+#### Exercise I ####
+First, I inspect the zion object to view its structure:
+```{r}
+# Inspecting content of the file
+head(zion)
+
+# Investigating coordinate system
+st_crs(zion)
+
+# Investigating attributes 
+class(zion)
+
+# Inspecting dimension
+dim(zion)
+
+```
+From the code above, we see that the zion object is a vector with x- and y coordinates. The object consists of one row and 12 columns and contains information on region, unit_type, unit_type, etc. From the column, 'geom' we see that it has the geometry of a polygon. Looking at the attributes of the object, we see that it contains 4; a simple feature, a tibble dataframe, a tibble, and a dataframe. The coordinate system used is UTM Zone 12, Northern Hemisphere.   
+
+
+Now we look at the srtm object:
+```{r}
+
+# Inspecting content of file
+head(srtm)
+
+# Investigating class of the object
+class(srtm)
+
+# Investigating number of layers
+nlayers(srtm)
+
+# Investigating dimensions
+dim(srtm)
+
+# Invesgating coordinate system
+crs(srtm)
+
+# Investigating data resolution
+res(srtm)
+
+
+```
+
+From inspecting the srtm object, we see that it is a raster object with one layer and with 457 rows and 465 columns. The data resolution is x: 0.0008333333, y: 0.0008333333. The coordinate system is " +proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0 ".
+
+  
+#### Exercise II ####
+In this exercise, I first reproject the srtm data set into the coordinate reference system of the zion object and visualize the results: 
+```{r}
+# Get CRS
+crs_1 <- crs(zion, asText = TRUE)
+
+# Project srtm into CRS of zion
+srtm2 <- projectRaster(srtm, crs = crs_1)
+
+# Plotting results
+plot(srtm2)
+
+```
+Now, I reproject the zion dataset into the coordinate reference system of the srtm object and visualize the results:
+```{r}
+# Get CRS
+crs_2 <- crs(srtm, asText = TRUE)
+
+# Reproject zion into CRS of srtm
+zion2 <- st_transform(zion, crs = crs_2)
+
+# PLotting results
+plot(zion2, max.plot =11)
+
+```
+
