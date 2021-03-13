@@ -20,5 +20,9 @@ This repository has the following directory structure:
 
 | Column | Description|
 |--------|:-----------|
+```data```| A folder with data files for assignments
 ```W1```| A folder with files connected to the assignment for week 1
 ```W2```| A folder with files connected to the assignment for week 2
+```W3```| A folder with files connected to the assignment for week 3
+```W4```| A folder with files connected to the assignment for week 4
+```W6```| A folder with files connected to the assignment for week 6
